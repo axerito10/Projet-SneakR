@@ -1,0 +1,58 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sneakers",
+  "info": {
+    "singularName": "sneaker",
+    "pluralName": "sneakers",
+    "displayName": "Sneaker",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "brand": {
+      "type": "string"
+    },
+    "colorway": {
+      "type": "string"
+    },
+    "estimatedMarketValue": {
+      "type": "decimal"
+    },
+    "gender": {
+      "type": "string"
+    },
+    "image": {
+      "type": "json"
+    },
+    "links": {
+      "type": "json"
+    },
+    "name": {
+      "type": "string"
+    },
+    "releaseDate": {
+      "type": "string"
+    },
+    "releaseYear": {
+      "type": "string"
+    },
+    "retailPrice": {
+      "type": "decimal"
+    },
+    "silhouette": {
+      "type": "string"
+    },
+    "story": {
+      "type": "text"
+    },
+    "UID": {
+      "type": "uid"
+    },
+    "sku": {
+      "type": "string"
+    }
+  }
+}
