@@ -1,0 +1,7 @@
+.article-card {
+    transition: transform 0.25s ease-in-out;
+}
+
+.article-card:hover {
+    transform: scale(1.025);
+}
