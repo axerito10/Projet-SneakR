@@ -10,4 +10,5 @@ return idUser
 
 export const logout = () => {
     sessionStorage.removeItem('jwt');
+    sessionStorage.removeItem('userId');
 };
