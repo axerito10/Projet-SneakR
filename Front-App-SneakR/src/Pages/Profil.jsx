@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { logout, getToken, getUserId } from '../helpers';
-
+import defaultImage from '../assets/no-image-found-2.jpg';
 
 const Profil = () => {
   const [isLoggedIn, setLoggedIn] = useState(true);
   const [userData, setUserData] = useState(null);
-  const [emailData, setEmailData] = useState(null)
+  const [dataWishlistMail, setDataWishlistMail] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [emailRecipient, setEmailRecipient] = useState('');
+  const [emailValid, setEmailValid] = useState(true); // Ajout de l'état pour la validité de l'adresse e-mail
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -46,10 +48,8 @@ const Profil = () => {
     fetchUserData();
   }, []);
 
-  // Fonction d'envoi de mail
-
   useEffect(() => {
-    const fetchMailData = async () => {
+    const fetchdataWishlistMail = async () => {
       try {
         const response = await fetch(`http://localhost:1337/api/privates/${getUserId()}?populate=*`, {
           method: 'GET',
@@ -61,22 +61,86 @@ const Profil = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setUserData(data);
+          setDataWishlistMail(data.data.attributes.wishlist.data);
         } else {
-          throw new Error('Erreur lors de la récupération des données de l\'utilisateur');
+          throw new Error('Erreur lors de la récupération des données de la wishlist');
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des données de l\'utilisateur', error);
-        setError('Erreur lors de la récupération des données de l\'utilisateur');
-      } finally {
-        setLoading(false);
+        console.error('Erreur lors de la récupération des données de la wishlist', error);
+        setError('Erreur lors de la récupération des données de la wishlist');
       }
     };
 
-    fetchMailData();
+    fetchdataWishlistMail();
   }, []);
 
-  const handleShareCollection = async() => {console.log("Collection partagée")}
+  const fetchImageAsBase64 = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'image :', error);
+      throw error;
+    }
+  };
+
+  const getThumbnailUrl = (item) => {
+    const imageObj = JSON.parse(item.attributes.image);
+    const isThumbnailValidUrl = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(imageObj.thumbnail);
+    return isThumbnailValidUrl ? imageObj.thumbnail : defaultImage;
+  };
+
+  const handleShareCollection = async () => {
+    try {
+      // Vérification du format de l'adresse e-mail
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailRecipient)) {
+        setEmailValid(false);
+        return; // Sortir de la fonction si l'adresse e-mail n'est pas valide
+      }
+  
+      // Réinitialiser l'état de validité de l'adresse e-mail
+      setEmailValid(true);
+  
+      const emailTo = emailRecipient || 'sneaker.addict.epitech@gmail.com';
+  
+      const wishlistItems = dataWishlistMail.map(item => (
+        `${item.attributes.name} - ${item.attributes.brand} - ${item.attributes.colorway}`
+      ));
+  
+      const formattedWishlist = `Voici ma wishlist de sneakers :\n\nContenu de la wishlist :\n\n${wishlistItems.join('\n')}`;
+  
+      const thumbnailAttachments = await Promise.all(dataWishlistMail.map(async item => {
+        const thumbnailUrl = getThumbnailUrl(item);
+        const thumbnailData = await fetchImageAsBase64(thumbnailUrl);
+        return { name: `${item.attributes.name}.jpg`, data: thumbnailData };
+      }));
+  
+      Email.send({
+        SecureToken: "1df44291-2521-4127-87ca-a00d7572f25a",
+        To: emailTo,
+        From: "sneaker.addict.epitech@gmail.com",
+        Subject: "Ma Wishlist de Sneakers",
+        Body: formattedWishlist,
+        Attachments: [
+          ...thumbnailAttachments,
+        ],
+      }).then(
+        message => alert(`Votre wishlist a bien été partagée à l'adresse mail : ${emailTo}`)
+      );
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'e-mail :', error);
+    }
+  };
+  
+  
+  
+
   return (
     <>
       <Navbar />
@@ -107,10 +171,25 @@ const Profil = () => {
             Modifier le mot de passe
           </button>
         </div>
+
+        {/* Ajout du champ d'input pour l'adresse e-mail */}
+        <div>
+          <input
+            type="email"
+            placeholder="Entrez une adresse e-mail"
+            value={emailRecipient}
+            onChange={(e) => setEmailRecipient(e.target.value)}
+            className={`mt-4 p-2 border rounded ${!emailValid ? 'border-red-500' : 'border-gray-300'}`} // Ajout des classes de style en fonction de la validité de l'adresse e-mail
+          />
+          {!emailValid && (
+            <p className="text-red-500">Veuillez entrer une adresse e-mail valide.</p>
+          )}
+        </div>
+
+        <button onClick={handleShareCollection} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">PARTAGER MA WISHLIST</button>
       </div>
-      <button onClick={handleShareCollection} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">PARTAGER MA COLLECTION</button>
     </>
   );
 };
 
-export default Profil
+export default Profil;
