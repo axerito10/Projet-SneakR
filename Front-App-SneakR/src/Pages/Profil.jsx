@@ -158,7 +158,7 @@ const Profil = () => {
           {isLoggedIn && (
             <button
               onClick={handleLogout}
-              className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="mt-6 bg-red-700 hover:bg-red-500 disabled:opacity-50 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Se déconnecter
             </button>
@@ -186,7 +186,7 @@ const Profil = () => {
           )}
         </div>
 
-        <button onClick={handleShareCollection} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">PARTAGER MA WISHLIST</button>
+        <button onClick={handleShareCollection} className="mt-4 bg-custom-blue hover:bg-custom-hover-blue disabled:opacity-50 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">PARTAGER MA WISHLIST</button>
       </div>
     </>
   );

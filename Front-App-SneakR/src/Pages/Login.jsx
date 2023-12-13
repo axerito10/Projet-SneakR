@@ -103,11 +103,14 @@ const Login = () => {
             placeholder="Mot de passe"
           />
         </div>
-        <button className="bg-blue-500 text-white p-2 rounded w-full" onClick={handleLogin}>Se connecter</button>
+        <button className="bg-custom-blue hover:bg-custom-hover-blue disabled:opacity-50 text-white p-2 rounded w-full" onClick={handleLogin}>Se connecter</button>
         {error && <p className="text-red-500 mt-2">{error}</p>}
         <div className="mt-4 text-center">
           <p>Vous n'avez pas de compte ?</p>
-          <Link to="/register" className="text-blue-500 underline">S'enregistrer</Link>
+          <Link to="/register" className="text-custom-blue underline">S'enregistrer</Link>
+        </div>
+        <div className=' text-center '>
+          <Link to="/" className="text-black italic text-xs">Continuer sans s'enregistrer</Link>
         </div>
       </div>
     </div>

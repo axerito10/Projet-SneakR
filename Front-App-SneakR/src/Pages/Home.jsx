@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.jsx';
-import SearchBar from '../components/SearchBar.jsx';
+import SearchBar from '../components/SearchBarHome.jsx';
 import Pagination from '../components/Pagination.jsx';
 import ArticlesPage from '../components/ArticlesPageHome.jsx';
 

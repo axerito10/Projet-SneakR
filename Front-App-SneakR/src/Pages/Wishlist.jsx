@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import ArticlesPage from '../components/ArticlesPage.jsx';
-import SearchBar from '../components/SearchBar.jsx';
 import { getToken, getUserId } from '../helpers.js';
 
 const Wishlist = () => {
@@ -120,17 +119,16 @@ const Wishlist = () => {
     return (
         <>
             <Navbar />
-            <SearchBar setSearchURL={setSearchURL} setSearchCOLOR={setSearchCOLOR} onSearch={handleSearch} setPage={setPage} />
             <div className="pb-3"></div>
             {loading && <p>Loading...</p>}
 
-            {error && <p>{error}</p>}
-
-            {!loading && !error && (
+            {!loading && !error && wishlist.data && wishlist.data.length > 0 ? (
                 <>
                     {deleteMessage && <p>{deleteMessage}</p>}
                     <ArticlesPage articles={wishlist.data} onDelete={handleDelete} fetchData={fetchData} />
                 </>
+            ) : (
+                <p className="text-center text-2xl">Votre wishlist est actuellement vide. Parcourez notre site et ajoutez des éléments à votre wishlist dès maintenant afin de pouvoir la partager avec vos amis !</p>
             )}
             <div className="pb-6"></div>
         </>

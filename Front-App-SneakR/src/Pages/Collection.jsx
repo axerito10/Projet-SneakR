@@ -13,16 +13,16 @@ const Collection = () => {
     const [page, setPage] = useState(1);
     const [deleteMessage, setDeleteMessage] = useState('');
 
-    let apiUrl = `http://localhost:1337/api/privates/${getUserId()}?populate=*`;
+    let apiUrl = `http://localhost:1337/api/privates/${getUserId()}?populate[collection][sort][0]=name`;
 
     const fetchData = async () => {
         try {
             if (searchURL.trim() !== '') {
-                apiUrl += `&filters[$or][0][name][$containsi]=${searchURL}&filters[$or][1][brand][$containsi]=${searchURL}`;
+                apiUrl += `&populate[collection][filters][name][$containsi]=${searchURL}`;
             }
 
             if (searchCOLOR.trim() !== '') {
-                apiUrl += `&filters[colorway][$containsi]=${searchCOLOR}`;
+                apiUrl += `&populate[collection][filters][colorway][$containsi]=${searchCOLOR}`;
             }
 
             const response = await fetch(apiUrl, {
@@ -124,13 +124,13 @@ const Collection = () => {
             <div className="pb-3"></div>
             {loading && <p>Loading...</p>}
 
-            {error && <p>{error}</p>}
-
-            {!loading && !error && (
+            {!loading && !error && collection.data && collection.data.length > 0 ? (
                 <>
                     {deleteMessage && <p>{deleteMessage}</p>}
                     <ArticlesPage articles={collection.data} onDelete={handleDelete} fetchData={fetchData} />
                 </>
+            ) : (
+                <p className="text-center text-2xl">Votre collection est actuellement vide. Ajoutez des articles dès maintenant pour les afficher ici !</p>
             )}
             <div className="pb-6"></div>
         </>
